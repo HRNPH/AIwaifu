@@ -3,11 +3,6 @@ import collections
 import re
 
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
-tokenizer = AutoTokenizer.from_pretrained("PygmalionAI/pygmalion-1.3b")
-config = AutoConfig.from_pretrained("PygmalionAI/pygmalion-1.3b")
-config.is_decoder = True
-model = AutoModelForCausalLM.from_pretrained("PygmalionAI/pygmalion-1.3b", config=config)
-
 # msg constructor and formatter
 class character_msg_constructor:
   def __init__(self, name, char_persona):
@@ -15,19 +10,21 @@ class character_msg_constructor:
     self.persona = char_persona
     self.conversation_history = ''
     self.emotion_analyzer = create_analyzer(task="emotion", lang="en")
+    self.split_counter = 0
+    self.history_loop_cache = ''
   
   def construct_msg(self, text:str, conversation_history=None) -> str:
     if conversation_history != None:
       self.conversation_history = f'{self.conversation_history}\n{conversation_history}' # add conversation history
 
       if len(self.conversation_history.split('\n')) > 10: # limit conversation history to 10 lines to prevent memory leak
-        self.conversation_history = self.conversation_history.split('\n')[-5:]  # replace with last 2 lines
+        self.conversation_history = self.conversation_history.split('\n')[-6:]  # replace with last 4 lines
+        self.split_counter =  2 
 
     conversation_template = f"""{self.name}'s Persona: {self.persona}
 
     {self.conversation_history.strip()}
     You: {text}
-    {self.name}:
     """
 
     return '\n'.join([x.strip() for x in conversation_template.split('\n')])
@@ -65,4 +62,5 @@ class character_msg_constructor:
   
   def clean_emotion_action_text_for_speech(self, text):
     clean_text = re.sub(r'\*.*?\*', '', text) # remove *action* from text
+    clean_text = clean_text.replace(f'{self.name}:', '') # replace -> name: "dialog"
     return clean_text
