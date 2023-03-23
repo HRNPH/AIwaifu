@@ -46,4 +46,4 @@ python ./main.py
 
 
 > Sometime shit can be broke(Especially in the server)
-> If you happen to found what's broken fell free to open an issue or pull requests!!!
+> If you happen to found what's broken feel free to open an issue or pull requests!!!
