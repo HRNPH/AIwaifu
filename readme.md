@@ -21,8 +21,8 @@ pip install -t ./requirements.txt
 - Install [VTS desktop audio plugin](https://www.youtube.com/watch?v=IiZ0JrGd6BQ&t=11s) by [Lua Lucky](https://www.youtube.com/watch?v=IiZ0JrGd6BQ&t=11s) CONSIDER SUBSCRIBING TO HER! She's Cute Vtuber & Developer then open it and connect to Vtube Studio
 
 
-- Start the server (In your home server or you on computer)
-> The software was splited into http server for model inference(since I need to use my home server cause the model take too much RAM > 12GB required > 18 recommended)
+- Start the server (In your home server in local network or on you computer 12GB ram is a minimum recommendation)
+> The software was splited into http server for model inference(since I need to use my home server cause the model take too much RAM > 12GB required >= 16 recommended)
 ```bash
 # this run on localhost 8267 by default
 python ./api_inference_server.py
