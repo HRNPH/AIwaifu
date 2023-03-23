@@ -1,5 +1,8 @@
 # AI-Waifu
-[Take A Look At This!](https://www.youtube.com/watch?v=Up4lwhPO8m0)
+[Take A Look At This Video!](https://www.youtube.com/watch?v=Up4lwhPO8m0)
+
+
+<img src="https://raw.githubusercontent.com/HRNPH/AIwaifu/master/image/preview.png?token=GHSAT0AAAAAAB7ZRGALVDFR7GTXM2VAVR2KZA4YV7A" width="1000">
 
 Open-Sourced Talkable, Flirtable, streamable, Modifiable! Finetunable! and even LEWDABLE! AIwaifu!!! what more can you ask for? huh?
 
