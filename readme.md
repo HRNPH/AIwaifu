@@ -2,7 +2,7 @@
 [Take A Look At This Video!](https://www.youtube.com/watch?v=Up4lwhPO8m0)
 
 
-<img src="https://raw.githubusercontent.com/HRNPH/AIwaifu/master/image/preview.png?token=GHSAT0AAAAAAB74UPIAD3RV6AIYRZB6PI7AZA5RQ2Q" width="1000">
+<img src="https://i.imgur.com/lrt6WX3.png" width="1000">
 
 Open-Sourced Talkable, Flirtable, streamable, Modifiable! Finetunable! and even LEWDABLE! AIwaifu!!! what more can you ask for? huh?
 
