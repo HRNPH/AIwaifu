@@ -13,7 +13,7 @@ YOUR ONE AND ONLY WAIFU(if you have your own datasets or custom the personality)
 ## Installation
 - clone the repo & install packages
 ```bash
-# may container some bloated packge(since I didn't clean the requirements YET)
+# may contain some bloated packge(since I didn't clean the requirements YET)
 # so I recommend install this on venv
 pip install -t ./requirements.txt
 ```
