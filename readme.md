@@ -6,6 +6,7 @@
 
 Open-Sourced Talkable, Flirtable, streamable, Modifiable! Finetunable! and even LEWDABLE! AIwaifu!!! what more can you ask for? huh?
 
+-  inspired by neuro-sama 
 
 YOUR ONE AND ONLY WAIFU(if you have your own datasets or custom the personality)
 
