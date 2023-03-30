@@ -14,7 +14,9 @@ YOUR ONE AND ONLY WAIFU(if you have your own datasets or custom the personality)
 - clone the repo & install packages
 ```bash
 # may contain some bloated packge(since I didn't clean the requirements YET)
+# you need to uninstall webscoket module and install websocket-client (which was included in the requirements for it to work)
 # so I recommend install this on venv
+pip uninstall websocket
 pip install -t ./requirements.txt
 ```
 - Download and start [Vtube-Studio](https://store.steampowered.com/app/1325860/VTube_Studio/)
