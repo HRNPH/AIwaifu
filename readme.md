@@ -25,7 +25,7 @@ pip install -t ./requirements.txt
 
 
 - Start the server (In your home server in local network or on you computer 12GB ram is a minimum recommendation)
-> The software was splited into http server for model inference(since I need to use my home server cause the model take too much RAM > 12GB required >= 16 recommended)
+> The software was splited into http server for model inference(since I need to use my home server cause the model take too much RAM(RAM Not VRAM) > 12GB required >= 16 recommended)
 ```bash
 # this run on localhost 8267 by default
 python ./api_inference_server.py
