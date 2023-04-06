@@ -19,8 +19,15 @@ import torch
 use_gpu = torch.cuda.is_available()
 print("Detecting GPU...")
 if use_gpu:
+    print("GPU detected!")
     device = torch.device('cuda')
-    print("Using GPU...")
+    print("Using GPU? (Y/N)")
+    if input().lower() == 'y':
+        print("Using GPU...")
+    else:
+        print("Using CPU...")
+        use_gpu = False
+        device = torch.device('cpu')
 
 print("Initilizing model....")
 print("Loading language model...")
