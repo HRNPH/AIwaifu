@@ -9,7 +9,15 @@ Open-Sourced Talkable, Flirtable, streamable, Modifiable! Finetunable! and even 
 -  inspired by neuro-sama 
 
 YOUR ONE AND ONLY WAIFU(if you have your own datasets or custom the personality)
-
+## Minimum Specs
+### CPU Only
+- 12 GB ram or more
+- Acceptable runtime tested on i7 7700k (1.00-2.30 min) faster CPU could be better
+### Inference With GPU
+- Minimum 8GB VRAM require
+- Will take at least 7.2 GB VRAM
+- Nvidia GPU Only
+- Very Fast On k80(Tested) faster or equivalent GPU will be pretty fast too
 ## Installation
 - clone the repo & install packages
 ```bash
