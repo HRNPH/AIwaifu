@@ -5,6 +5,7 @@ from vtube_studio import Char_control
 import romajitable # temporary use this since It'll blow up our ram if we use Machine Translation Model
 from playsound import playsound # play talking sound
 import scipy.io.wavfile as wavfile
+import torch
 
 # ---------- load Conversation model ----------
 # ----------- Will move this to server later -------- (16GB ram needed at least) for 1.3b
@@ -14,15 +15,35 @@ import scipy.io.wavfile as wavfile
 # model = AutoModelForCausalLM.from_pretrained("PygmalionAI/pygmalion-350m", config=config)
 # load model at half precision
 
+# ---------- load Conversation model ----------
+use_gpu = torch.cuda.is_available()
+print("Detecting GPU...")
+if use_gpu:
+    device = torch.device('cuda')
+    print("Using GPU...")
+
 print("Initilizing model....")
-print("Loading langugage model...")
+print("Loading language model...")
 tokenizer = AutoTokenizer.from_pretrained("PygmalionAI/pygmalion-1.3b", use_fast=True)
 config = AutoConfig.from_pretrained("PygmalionAI/pygmalion-1.3b", is_decoder=True)
-model = AutoModelForCausalLM.from_pretrained("PygmalionAI/pygmalion-1.3b", config=config)
-# model.half() # load model at half precision Only work for GPU
+model = AutoModelForCausalLM.from_pretrained("PygmalionAI/pygmalion-1.3b", config=config, )
+
+if use_gpu: # load model to GPU
+  model = model.to(device)
+  print("Inference at half precision? (Y/N)")
+  if input().lower() == 'y':
+      print("Loading model at half precision...")
+      model.half()
+  else:
+      print("Loading model at full precision...")
+
 print("Loading machine translation model...")
-lmtokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M")
+lmtokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M", use_fast=True)
 lmmodel = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M")
+
+if use_gpu: # load model to GPU
+  lmmodel = lmmodel.to(device)
+
 print('--------Finished!----------')
 # --------------------------------------------------
 
@@ -54,6 +75,8 @@ async def get_waifuapi(command: str, data: str):
         msg = talk.construct_msg(msg, talk.history_loop_cache) # construct message input and cache History model
         ## ----------- Will move this to server later -------- (16GB ram needed at least)
         inputs = tokenizer(msg, return_tensors='pt')
+        if use_gpu:
+            inputs = inputs.to(device)
         out = model.generate(**inputs, max_length=len(inputs['input_ids'][0]) + 100, pad_token_id=tokenizer.eos_token_id)
         conversation = tokenizer.decode(out[0])
         ## --------------------------------------------------
@@ -67,6 +90,8 @@ async def get_waifuapi(command: str, data: str):
         # -------------- use machine translation model to translate to japanese and submit to client --------------
         cleaned_text = talk.clean_emotion_action_text_for_speech(current_converse[-1]) # clean text for speech
         inputs = lmtokenizer([cleaned_text], return_tensors='pt')
+        if use_gpu:
+            inputs = inputs.to(device)
         outs = lmmodel.generate(**inputs, forced_bos_token_id=lmtokenizer.lang_code_to_id['jpn_Jpan'])
         translated = lmtokenizer.batch_decode(outs, skip_special_tokens=True)[0]
 
