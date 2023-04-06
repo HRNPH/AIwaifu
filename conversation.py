@@ -2,7 +2,6 @@ from pysentimiento import create_analyzer
 import collections
 import re
 
-from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
 # msg constructor and formatter
 class character_msg_constructor:
   def __init__(self, name, char_persona):
