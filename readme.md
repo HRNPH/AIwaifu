@@ -1,9 +1,12 @@
 # AI-Waifu
-[Take A Look At This Video!](https://www.youtube.com/watch?v=Up4lwhPO8m0)
+aiwaifu is an Open sourced finetunable customizable simpable AI waifu inspired by neuro-sama
 
-Open sourced finetunable customizable simpable AI waifu inspired by neuro-sama
+the goal is just giving everyone a foudational platform to developer their own waifu
 
 Powered by opensource AI model for self-hosted/deploy
+
+For how our waifu look like
+[Take A Look At This Video!](https://www.youtube.com/watch?v=Up4lwhPO8m0)
 
 <img src="https://i.imgur.com/lrt6WX3.png" width="1000">
 
