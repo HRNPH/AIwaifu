@@ -1,6 +1,8 @@
 # AI-Waifu
 [Take A Look At This Video!](https://www.youtube.com/watch?v=Up4lwhPO8m0)
 
+Open sourced finetunable customizable simpable AI waifu inspired by neuro-sama
+Powered by opensource AI model for self-hosted/deploy
 
 <img src="https://i.imgur.com/lrt6WX3.png" width="1000">
 
