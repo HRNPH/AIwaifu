@@ -68,3 +68,8 @@ python ./main.py
 # Code Of Conduct
 - Everything We Made Is OpenSourced, Free & Customizable To the Very Core
 - We'll never include propriety Model (ChatGPT/ETC...) since it'll conflict with what we state above
+
+# How Can I help?
+Take a look at the issue & feel free to ask question or suggest new features or you can even tests our model to the limit!
+
+all help will be appreciated :DD
