@@ -64,3 +64,7 @@ python ./main.py
 
 > Sometime shit can be broke(Especially in the server)
 > If you happen to found what's broken feel free to open an issue or pull requests!!!
+
+# Code Of Conduct
+- Everything We Made Is OpenSourced, Free & Customizable To the Very Core
+- We'll never include propriety Model (ChatGPT/ETC...) since it'll conflict with what we state above
