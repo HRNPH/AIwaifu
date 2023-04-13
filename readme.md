@@ -44,9 +44,9 @@ python -m venv venv
 pip uninstall websocket
 pip install -r ./requirements.txt
 ```
-- Download and start [Vtube-Studio](https://store.steampowered.com/app/1325860/VTube_Studio/)
-- Open the plugin API at port 8001 in the app setting (or any port you desired but you need to modify the code) 
+- Download and start [Vtube-Studio](https://store.steampowered.com/app/1325860/VTube_Studio/) (Just download it from steam)
 - Install [VTS desktop audio plugin](https://www.youtube.com/watch?v=IiZ0JrGd6BQ&t=11s) by [Lua Lucky](https://www.youtube.com/watch?v=IiZ0JrGd6BQ&t=11s) CONSIDER SUBSCRIBING TO HER! She's Cute Vtuber & Developer then open it and connect to Vtube Studio
+- Just follow lua-lucky videoOpen the plugin API at port 8001 in the app setting (or any port you desired but you need to modify the code)
 
 
 - Start the server (In your home server in local network or on you computer 12GB ram is a minimum recommendation)
