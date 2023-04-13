@@ -27,9 +27,20 @@ YOUR ONE AND ONLY WAIFU(if you have your own datasets or custom the personality)
 ## Installation
 - clone the repo & install packages
 ```bash
+git clone https://github.com/HRNPH/AIwaifu.git
+cd ./AIwaifu
+```
+```bash
 # may contain some bloated packge(since I didn't clean the requirements YET)
-# you need to uninstall webscoket module and install websocket-client (which was included in the requirements for it to work)
 # so I recommend install this on venv
+
+# ---- optional -----
+python -m venv venv
+./venv/script/activate  # for windows
+# source ./venv/bin/activate # for linux
+# --------------------
+
+# you need to uninstall webscoket module and install websocket-client (which was included in the requirements for it to work)
 pip uninstall websocket
 pip install -r ./requirements.txt
 ```
