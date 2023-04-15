@@ -6,6 +6,22 @@ import romajitable # temporary use this since It'll blow up our ram if we use Ma
 from playsound import playsound # play talking sound
 import scipy.io.wavfile as wavfile
 import torch
+import wget 
+
+def load_tts_model():
+    src = 'https://huggingface.co/spaces/kouenYoung/anime-tts/resolve/main/1374_epochs.pth'
+    dst = 'anime_tts/1374_epochs.pth'
+    wget.download(src, dst)
+
+def setup():
+    isInit = input("First Time Setup (Y/N): ")
+    if isInit.lower() == 'y':
+        print("Downloading Prototype TTS model...")
+        load_tts_model()
+    else:
+        print("Skipping setup...")
+
+setup()
 
 # ---------- load Conversation model ----------
 # ----------- Will move this to server later -------- (16GB ram needed at least) for 1.3b
