@@ -1,6 +1,5 @@
 print('Initializing... Dependencies')
 from conversation import character_msg_constructor
-from anime_tts.custom_inference import tts # text to speech from huggingface
 from vtube_studio import Char_control
 import romajitable # temporary use this since It'll blow up our ram if we use Machine Translation Model
 import pyaudio
@@ -9,14 +8,38 @@ import scipy.io.wavfile as wavfile
 import requests
 import random
 import os
+import logging
+logging.getLogger("requests").setLevel(logging.WARNING) # make requests logging only important stuff
+logging.getLogger("urllib3").setLevel(logging.WARNING) # make requests logging only important stuff
+
 talk = character_msg_constructor("Lilia", None) # initialize character_msg_constructor
 
-print('Initializing... Vtube Studio')
+# ----------- Waifu Vocal Pipeline -----------------------
+from AIVoifu.tts import tts
+from AIVoifu.voice_conversion import vc_inference as vc
+class tts_pipeline:
+    def __init__(self) -> None:
+        print('Loading Waifu Vocal Pipeline...')
+        self.cache_root = './audio_cache'
+        self.model = tts.OpenJtalk()
+        self.vc_model = vc.vits_vc_inference(load_model=True)
+        print('Loaded Waifu Vocal Pipeline')
+
+    def tts(self, text, voice_conversion=True, save_path=None):
+        if not save_path:
+            save_path = f'{self.cache_root}/dialog_cache.wav'
+        self.model.tts(text, save_path)
+        if voice_conversion:
+            self.vc_model.convert(save_path, 22050, from_file=True, save_path=save_path)
+        return save_path
+vocal_pipeline = tts_pipeline()
+
 # initialize Vstudio Waifu Controller
+print('Initializing... Vtube Studio')
 waifu = Char_control(port=8001, plugin_name='MyBitchIsAI', plugin_developer='HRNPH')
 print('Initialized')
-# vtube.express(express) # use this to express feeling
 
+# chat api
 def chat(msg, reset=False):
     command = 'chat'
     if reset:
@@ -25,21 +48,17 @@ def chat(msg, reset=False):
         'command': f'{command}',
         'data': msg,
     }
-    r = requests.get('http://localhost:8267/waifuapi', params=params)
+    try:
+        r = requests.get('http://localhost:8267/waifuapi', params=params)
+    except requests.exceptions.ConnectionError as e:
+        print('--------- Exception Occured ---------')
+        print('if you have run the server on different device, please specify the ip address of the server with the port')
+        print('Example: http://192.168.1.112:8267 or leave it blank to use localhost')
+        print('***please specify the ip address of the server with the port*** at:')
+        print(f'*Line {e.__traceback__.tb_lineno}: {e}')
+        print('-------------------------------------')
+        exit()
     return r.text
-
-
-
-# run ping to keep connection alive in the background
-import threading
-import time
-# def ping():
-#     while True:
-#         waifu.express('netural')
-#         time.sleep(3)
-
-
-# threading.Thread(target=ping).start()
 
 split_counter = 0
 history = ''
@@ -72,9 +91,10 @@ while True:
 
     # using Japanglish TTS we don't need to clean the text since server already did it before translating
     translated = japanese_answer
-    _, (sr, audio) = tts(translated, 0)
-    random_name = '_cache' #random.randint(0, 1000)
-    wavfile.write(f'./audio_cache/dialog{random_name}.wav', sr, audio)
+    # _, (sr, audio) = tts(translated, 0)
+    # random_name = '_cache' #random.randint(0, 1000)
+    # wavfile.write(f'./audio_cache/dialog{random_name}.wav', sr, audio)
+    vocal_pipeline.tts(translated, save_path=f'./audio_cache/dialog_cache.wav')
 
     # --------------------------------------------------
     

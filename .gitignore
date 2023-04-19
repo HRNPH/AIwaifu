@@ -1,2 +1,6 @@
 \venv
 \__pycache__
+\vc_playground
+\build
+*.pth
+/voice_conversion/Sovits/monotonic_align/monotonic_align/core.cp38-win_amd64.pyd
