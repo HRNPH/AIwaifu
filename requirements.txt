@@ -94,4 +94,5 @@ zipp==3.15.0
 zope.event==4.6
 zope.interface==6.0
 accelerate
+torchaudio
 wget

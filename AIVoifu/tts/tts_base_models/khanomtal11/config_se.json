@@ -1,0 +1,121 @@
+{
+    "model": "speaker_encoder",
+    "run_name": "speaker_encoder",
+    "run_description": "resnet speaker encoder trained with commonvoice all languages dev and train, Voxceleb 1 dev and Voxceleb 2 dev",
+    "epochs": 100000,
+    "batch_size": null,
+    "eval_batch_size": null,
+    "mixed_precision": false,
+    "run_eval": true,
+    "test_delay_epochs": 0,
+    "print_eval": false,
+    "print_step": 50,
+    "tb_plot_step": 100,
+    "tb_model_param_stats": false,
+    "save_step": 1000,
+    "checkpoint": true,
+    "keep_all_best": false,
+    "keep_after": 10000,
+    "num_loader_workers": 8,
+    "num_val_loader_workers": 0,
+    "use_noise_augment": false,
+    "output_path": "../checkpoints/speaker_encoder/language_balanced/normalized/angleproto-4-samples-by-speakers/",
+    "distributed_backend": "nccl",
+    "distributed_url": "tcp://localhost:54321",
+    "audio": {
+        "fft_size": 512,
+        "win_length": 400,
+        "hop_length": 160,
+        "frame_shift_ms": null,
+        "frame_length_ms": null,
+        "stft_pad_mode": "reflect",
+        "sample_rate": 16000,
+        "resample": false,
+        "preemphasis": 0.97,
+        "ref_level_db": 20,
+        "do_sound_norm": false,
+        "do_trim_silence": false,
+        "trim_db": 60,
+        "power": 1.5,
+        "griffin_lim_iters": 60,
+        "num_mels": 64,
+        "mel_fmin": 0.0,
+        "mel_fmax": 8000.0,
+        "spec_gain": 20,
+        "signal_norm": false,
+        "min_level_db": -100,
+        "symmetric_norm": false,
+        "max_norm": 4.0,
+        "clip_norm": false,
+        "stats_path": null,
+        "do_rms_norm": true,
+        "db_level": -27.0
+    },
+    "datasets": [
+        {
+            "name": "voxceleb2",
+            "path": "/workspace/scratch/ecasanova/datasets/VoxCeleb/vox2_dev_aac/",
+            "meta_file_train": null,
+            "ununsed_speakers": null,
+            "meta_file_val": null,
+            "meta_file_attn_mask": "",
+            "language": "voxceleb"
+        }
+    ],
+    "model_params": {
+        "model_name": "resnet",
+        "input_dim": 64,
+        "use_torch_spec": true,
+        "log_input": true,
+        "proj_dim": 512
+    },
+    "audio_augmentation": {
+        "p": 0.5,
+        "rir": {
+            "rir_path": "/workspace/store/ecasanova/ComParE/RIRS_NOISES/simulated_rirs/",
+            "conv_mode": "full"
+        },
+        "additive": {
+            "sounds_path": "/workspace/store/ecasanova/ComParE/musan/",
+            "speech": {
+                "min_snr_in_db": 13,
+                "max_snr_in_db": 20,
+                "min_num_noises": 1,
+                "max_num_noises": 1
+            },
+            "noise": {
+                "min_snr_in_db": 0,
+                "max_snr_in_db": 15,
+                "min_num_noises": 1,
+                "max_num_noises": 1
+            },
+            "music": {
+                "min_snr_in_db": 5,
+                "max_snr_in_db": 15,
+                "min_num_noises": 1,
+                "max_num_noises": 1
+            }
+        },
+        "gaussian": {
+            "p": 0.0,
+            "min_amplitude": 0.0,
+            "max_amplitude": 1e-05
+        }
+    },
+    "storage": {
+        "sample_from_storage_p": 0.5,
+        "storage_size": 40
+    },
+    "max_train_step": 1000000,
+    "loss": "angleproto",
+    "grad_clip": 3.0,
+    "lr": 0.0001,
+    "lr_decay": false,
+    "warmup_steps": 4000,
+    "wd": 1e-06,
+    "steps_plot_stats": 100,
+    "num_speakers_in_batch": 100,
+    "num_utters_per_speaker": 4,
+    "skip_speakers": true,
+    "voice_len": 2.0
+}
