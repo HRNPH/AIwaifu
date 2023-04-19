@@ -16,7 +16,7 @@ class character_msg_constructor:
     if conversation_history != None:
       self.conversation_history = f'{self.conversation_history}\n{conversation_history}' # add conversation history
 
-      if len(self.conversation_history.split('\n')) > 10: # limit conversation history to 10 lines to prevent memory leak
+      if len(self.conversation_history.split('\n')) > 40: # limit conversation history to prevent memory leak
         self.conversation_history = self.conversation_history.split('\n')[-6:]  # replace with last 4 lines
         self.split_counter =  2 
 

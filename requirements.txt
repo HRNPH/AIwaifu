@@ -95,3 +95,4 @@ zope.event==4.6
 zope.interface==6.0
 accelerate
 torchaudio
+wget
