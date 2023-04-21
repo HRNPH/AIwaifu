@@ -4,6 +4,7 @@ There's two components
 1. TTS: This is a typical text to speech model which you can add your own
 2. Voice_Conversion: This is our Heroine on making TTS sound like a cute girl by converting TTS speech using SoVits which you can train easily using our training script
 
+First of all we get TTS voice from TTS pipeline, adn the we do voice conversion on it
 ## Custom TTS
 in the TTS folder you'll found
 - tts_base_model: folder
@@ -35,5 +36,8 @@ class CustomTTS:
     if save:
       output.save('save_path')
     return output
-  
 ```
+## Custom Voice Conversion
+if you're not looking to add new language but just want to custom the model voice easily
+
+Our recommendation is to just Train Voice Conversion pipeline on your own samples use our training screen
