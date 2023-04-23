@@ -46,6 +46,10 @@ python -m venv venv
 # you need to uninstall webscoket module and install websocket-client (which was included in the requirements for it to work)
 pip uninstall websocket
 pip install -r ./requirements.txt
+
+# You need to install the monotonic_align module for sovits to work
+cd AIVoifu/voice_conversion/Sovits/monotonic_align
+python setup.py build_ext --inplace
 ```
 - Download and start [Vtube-Studio](https://store.steampowered.com/app/1325860/VTube_Studio/) (Just download it from steam)
 - Install [VTS desktop audio plugin](https://www.youtube.com/watch?v=IiZ0JrGd6BQ&t=11s) by [Lua Lucky](https://www.youtube.com/watch?v=IiZ0JrGd6BQ&t=11s) CONSIDER SUBSCRIBING TO HER! She's Cute Vtuber & Developer then open it and connect to Vtube Studio
