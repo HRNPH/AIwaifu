@@ -7,7 +7,6 @@ from playsound import playsound # play talking sound
 import scipy.io.wavfile as wavfile
 import torch
 import wget 
-setup()
 
 # ---------- load Conversation model ----------
 # ----------- Will move this to server later -------- (16GB ram needed at least) for 1.3b
