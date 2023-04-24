@@ -40,4 +40,4 @@ class CustomTTS:
 ## Custom Voice Conversion
 if you're not looking to add new language but just want to custom the model voice easily
 
-Our recommendation is to just Train Voice Conversion pipeline on your own samples use our training screen
+Our recommendation is to just Train Voice Conversion pipeline on your own samples using our [Training Notebook](https://colab.research.google.com/drive/1But3y-v4Ok7cnT5bxXLCF49k_CCgp8Hd?usp=sharing)
