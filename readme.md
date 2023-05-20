@@ -16,7 +16,7 @@
 # What is it?
 aiwaifu is an Open sourced finetunable customizable simpable AI waifu inspired by neuro-sama
 
-the goal is to just giving everyone a foudational platform to develop their own waifu
+the goal is to just giving everyone a foundational platform to develop their own waifu
 
 Powered by opensource AI model for self-hosted/deploy
 
