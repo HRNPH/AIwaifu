@@ -5,6 +5,7 @@
     </ul>
   </div>
   <p align='center'>an Open sourced customizable AI waifu for everyone</p>
+  <p align='center'><a href='https://discord.gg/scGBZKX4'>Join Our Discord!</a></p>
   
   [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/makes-people-smile.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/0-percent-optimized.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/check-it-out.svg)](https://forthebadge.com)
   
