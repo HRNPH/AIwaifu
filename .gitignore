@@ -7,3 +7,4 @@
 *.c
 *.so
 audio_cache/dialog_cache.wav
+*.wav

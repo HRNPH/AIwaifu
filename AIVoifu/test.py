@@ -1,5 +1,5 @@
-from tts_base_models.khanomtal11 import speech as knanomtal11
-from tts_base_models.openjtalk import speech as openjtalker
-# knanomtal11.khanomtal11().tts('สวัสดีค่ะ ดิฉันชื่ออมาริน ฉันสุทา', 'test.wav', 0)
+from tts.tts import auto_tts
 
-openjtalker.tts('おはよごさいます わたしは さいとちゃんですは', 'test.wav')
+tts_model = auto_tts(model_selection="gtts")
+# tts_model.tts('おはよごさいます わたしは さいとちゃんですは', "test.wav", language='en')
+tts_model.tts('Hello World', "test.wav", language='en')
