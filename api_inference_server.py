@@ -3,7 +3,6 @@ from conversation import character_msg_constructor
 from AIVoifu.tts import tts # text to speech from huggingface
 from vtube_studio import Char_control
 import romajitable # temporary use this since It'll blow up our ram if we use Machine Translation Model
-from playsound import playsound # play talking sound
 import scipy.io.wavfile as wavfile
 import torch
 import wget 
