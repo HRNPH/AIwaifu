@@ -69,18 +69,8 @@ while True:
         continue # skip audio processing if the answer is just the name (no talking)
 
     # ----------- Waifu Create Talking Audio -----------------------
-    ## generate speaking voice (Translates to Japanese and then TTS)/(Japanglish TTS)[take lower memory but not as enjoyable]
-    ## we'll use Japanglish TTS for prototyping, we'll use Japanese TTS for production
-    # cleaned_text = talk.clean_emotion_action_text_for_speech(answer) # delete *describe* in text and left with only "speaking" part
-    # translated = romajitable.to_kana(cleaned_text).hiragana # translate to Japanese
-
-    # using Japanglish TTS we don't need to clean the text since server already did it before translating
     translated = japanese_answer
-    # _, (sr, audio) = tts(translated, 0)
-    # random_name = '_cache' #random.randint(0, 1000)
-    # wavfile.write(f'./audio_cache/dialog{random_name}.wav', sr, audio)
     vocal_pipeline.tts(translated, save_path=f'./audio_cache/dialog_cache.wav')
-
     # --------------------------------------------------
     
     # ----------- Waifu Talking -----------------------
