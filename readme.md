@@ -41,7 +41,7 @@ YOUR ONE AND ONLY WAIFU(if you have your own datasets or custom the personality)
 - Nvidia GPU Only
 - Very Fast On k80(Tested) faster or equivalent GPU will be pretty fast too
 ## Installation
-- Make sure you have python3 >= 3.8 installed and > 10GB storage with decent internet connection(for model weight)
+- Make sure you have python3 = 3.8.X installed and > 10GB storage with decent internet connection(for model weight)
 - Make sure you have Installed C/C++ build tools and have Cmake installted (if not follow [this Issue](https://github.com/HRNPH/AIwaifu/issues/20#issuecomment-1507086317))
 - Make sure to have [GIT LFS](https://git-lfs.com/) Installed to handle large file download in git
 - clone the repo & install packages
