@@ -1,5 +1,5 @@
 print('Initializing... Dependencies')
-from conversation import character_msg_constructor
+from Conversation.conversation import character_msg_constructor
 from vtube_studio import Char_control
 import romajitable # temporary use this since It'll blow up our ram if we use Machine Translation Model
 import pyaudio
