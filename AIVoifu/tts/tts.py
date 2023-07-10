@@ -78,7 +78,7 @@ class auto_tts: # add your tts model mapping 'key' here
     # possible_model = Literal['key', 'key2', 'key3', ...]
     def __init__(
         self,
-        model_selection: possible_model= "openjtalk"
+        model_selection: possible_model=None
     ) -> None:
         self.model_mapping = {
             "khanomtal11": khanomtal11,
@@ -86,9 +86,26 @@ class auto_tts: # add your tts model mapping 'key' here
             "gtts": Gtts
             # 'key' : your tts class
         }
+
+        # manual model selection and validation if model existed
+        if model_selection is None:
+            print("---- Available TTS models: ---")
+            for key in self.list_all_models():
+                print('-', key)
+            model_selection = input("Select TTS model: ")
+        
+        if not self.__validate_model(model_selection):
+            raise ValueError(f"Invalid model selection: {model_selection}")
+
         self.model_selection = model_selection
 
     def tts(self, text, out_path, model_name=None, **kwargs):
         if model_name is None:
             model_name = self.model_selection
         self.model_mapping[model_name]().tts(text, out_path, **kwargs)
+
+    def list_all_models(self) -> list:
+        return list(self.model_mapping.keys())
+    
+    def __validate_model(self, model_name: str) -> bool:
+        return model_name in self.model_mapping.keys()

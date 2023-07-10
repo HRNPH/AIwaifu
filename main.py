@@ -15,29 +15,14 @@ logging.getLogger("urllib3").setLevel(logging.WARNING) # make requests logging o
 talk = character_msg_constructor("Lilia", None) # initialize character_msg_constructor
 
 # ----------- Waifu Vocal Pipeline -----------------------
-from AIVoifu.tts import tts
-from AIVoifu.voice_conversion import vc_inference as vc
-class tts_pipeline:
-    def __init__(self) -> None:
-        print('Loading Waifu Vocal Pipeline...')
-        self.cache_root = './audio_cache'
-        self.model = tts.OpenJtalk()
-        self.vc_model = vc.vits_vc_inference(load_model=True)
-        print('Loaded Waifu Vocal Pipeline')
-
-    def tts(self, text, voice_conversion=True, save_path=None):
-        if not save_path:
-            save_path = f'{self.cache_root}/dialog_cache.wav'
-        self.model.tts(text, save_path)
-        if voice_conversion:
-            self.vc_model.convert(save_path, 22050, from_file=True, save_path=save_path)
-        return save_path
+from AIVoifu.client_pipeline import tts_pipeline
 vocal_pipeline = tts_pipeline()
 
 # initialize Vstudio Waifu Controller
 print('Initializing... Vtube Studio')
 waifu = Char_control(port=8001, plugin_name='MyBitchIsAI', plugin_developer='HRNPH')
 print('Initialized')
+
 
 # chat api
 def chat(msg, reset=False):
