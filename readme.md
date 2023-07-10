@@ -49,6 +49,15 @@ YOUR ONE AND ONLY WAIFU(if you have your own datasets or custom the personality)
 git clone https://github.com/HRNPH/AIwaifu.git
 cd ./AIwaifu
 ```
+### 1. Install Dependencies
+#### (Recommend) Using Poetry
+1. [Install Poetry](https://python-poetry.org/docs/#installing-with-the-official-installer)
+2. Install Dependencies (assume you're in the root of the 'AIwaifu' repo)
+```bash
+poetry install
+poetry shell # to activate the virtual environment (need to do this everytime you want to use this projects)
+```
+#### (Not Recommend) Using Python 3.8.X environment
 ```bash
 # may contain some bloated packge(since I didn't clean the requirements YET)
 # so I recommend install this on venv
@@ -59,19 +68,21 @@ python -m venv venv
 # source ./venv/bin/activate # for linux
 # --------------------
 
-# you need to uninstall webscoket module and install websocket-client (which was included in the requirements for it to work)
+# you need to uninstall websocket module and install websocket-client (which was included in the requirements for it to work)
 pip uninstall websocket
 pip install -r ./requirements.txt
-
+```
+### 2. Compile monotonic_align module
+```bash
 # You need to install the monotonic_align module for sovits to work
 cd AIVoifu/voice_conversion/Sovits/monotonic_align
-python setup.py build_ext --inplace
+python setup.py build_ext --inplace && cd ../../../../
 ```
 - Download and start [Vtube-Studio](https://store.steampowered.com/app/1325860/VTube_Studio/) (Just download it from steam)
 - Install [VTS desktop audio plugin](https://www.youtube.com/watch?v=IiZ0JrGd6BQ&t=11s) by [Lua Lucky](https://www.youtube.com/watch?v=IiZ0JrGd6BQ&t=11s) CONSIDER SUBSCRIBING TO HER! She's Cute Vtuber & Developer then open it and connect to Vtube Studio
 - Just follow lua-lucky videoOpen the plugin API at port 8001 in the app setting (or any port you desired but you need to modify the code)
 
-
+### 3. Client Setup
 - Start the server (In your home server in local network or on you computer 12GB ram is a minimum recommendation)
 > The software was splited into http server for model inference(since I need to use my home server cause the model take too much RAM(RAM Not VRAM) > 12GB required >= 16 recommended)
 ```bash
