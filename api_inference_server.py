@@ -1,5 +1,6 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig, AutoModelForSeq2SeqLM
 from Conversation.conversation import character_msg_constructor
+from Conversation.translation.pipeline import Translate
 from AIVoifu.tts import tts # text to speech from huggingface
 from vtube_studio import Char_control
 import romajitable # temporary use this since It'll blow up our ram if we use Machine Translation Model
@@ -7,15 +8,10 @@ import scipy.io.wavfile as wavfile
 import torch
 import wget 
 
-# ---------- load Conversation model ----------
-# ----------- Will move this to server later -------- (16GB ram needed at least) for 1.3b
-# tokenizer = AutoTokenizer.from_pretrained("PygmalionAI/pygmalion-350m")
-# config = AutoConfig.from_pretrained("PygmalionAI/pygmalion-350m")
-# config.is_decoder = True
-# model = AutoModelForCausalLM.from_pretrained("PygmalionAI/pygmalion-350m", config=config)
-# load model at half precision
+# ---------- Config ----------
+translation = bool(input("Enable translation? (Y/n): ").lower() in ['y', ''])
 
-# ---------- load Conversation model ----------
+device = torch.device('cpu') # default to cpu
 use_gpu = torch.cuda.is_available()
 print("Detecting GPU...")
 if use_gpu:
@@ -29,6 +25,7 @@ if use_gpu:
         use_gpu = False
         device = torch.device('cpu')
 
+# ---------- load Conversation model ----------
 print("Initilizing model....")
 print("Loading language model...")
 tokenizer = AutoTokenizer.from_pretrained("PygmalionAI/pygmalion-1.3b", use_fast=True)
@@ -44,12 +41,13 @@ if use_gpu: # load model to GPU
   else:
       print("Loading model at full precision...")
 
-print("Loading machine translation model...")
-lmtokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M", use_fast=True)
-lmmodel = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M")
-
-if use_gpu: # load model to GPU
-  lmmodel = lmmodel.to(device)
+if translation:
+    print("Translation enabled!")
+    print("Loading machine translation model...")
+    translator = Translate(device) # initialize translator
+else:
+    print("Translation disabled!")
+    print("Proceeding... wtih pure english conversation")
 
 print('--------Finished!----------')
 # --------------------------------------------------
@@ -96,11 +94,8 @@ async def get_waifuapi(command: str, data: str):
 
         # -------------- use machine translation model to translate to japanese and submit to client --------------
         cleaned_text = talk.clean_emotion_action_text_for_speech(current_converse[-1]) # clean text for speech
-        inputs = lmtokenizer([cleaned_text], return_tensors='pt')
-        if use_gpu:
-            inputs = inputs.to(device)
-        outs = lmmodel.generate(**inputs, forced_bos_token_id=lmtokenizer.lang_code_to_id['jpn_Jpan'])
-        translated = lmtokenizer.batch_decode(outs, skip_special_tokens=True)[0]
+        if translation:
+            translated = translator.translate(cleaned_text) # translate to [language] if translation is enabled
 
         return JSONResponse(content=f'{current_converse[-1]}<split_token>{translated}')
     

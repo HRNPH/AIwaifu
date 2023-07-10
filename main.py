@@ -61,7 +61,12 @@ while True:
     # ----------- Create Response --------------------------
     answer = chat(con) # send message to api
     answer = answer.split('<split_token>')
-    answer, japanese_answer = answer[0], answer[1]
+    answer, translated_answer = answer[0], answer[1]
+
+    use_answer = answer # use translated answer if available
+    if len(translated_answer) > 2:
+        use_answer = translated_answer
+
     answer.replace('Lilia:', '') # remove name from answer
     # ------------------------------------------------------
     print(f'{answer}')
@@ -69,8 +74,7 @@ while True:
         continue # skip audio processing if the answer is just the name (no talking)
 
     # ----------- Waifu Create Talking Audio -----------------------
-    translated = japanese_answer
-    vocal_pipeline.tts(translated, save_path=f'./audio_cache/dialog_cache.wav')
+    vocal_pipeline.tts(use_answer, save_path=f'./audio_cache/dialog_cache.wav')
     # --------------------------------------------------
     
     # ----------- Waifu Talking -----------------------
