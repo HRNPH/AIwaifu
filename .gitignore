@@ -6,3 +6,4 @@
 /voice_conversion/Sovits/monotonic_align/monotonic_align/core.cp38-win_amd64.pyd
 *.c
 *.so
+audio_cache/dialog_cache.wav
