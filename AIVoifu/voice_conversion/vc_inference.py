@@ -14,6 +14,7 @@ from .Sovits.data_utils import UnitAudioLoader, UnitAudioCollate
 from .Sovits.models import SynthesizerTrn
 from scipy.io.wavfile import write
 from torchaudio.functional import resample
+torchaudio.set_audio_backend("soundfile") # use soundfile backend, due to error with sox backend
 
 class vits_vc_inference:
     def __init__(self, model_name='base_model.pth', load_model=True, model_link='https://huggingface.co/openwaifu/SoVits-VC-Chtholly-Nota-Seniorious-0.1/resolve/main/chtholly.pth') -> None:

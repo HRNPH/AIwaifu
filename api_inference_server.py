@@ -94,6 +94,8 @@ async def get_waifuapi(command: str, data: str):
 
         # -------------- use machine translation model to translate to japanese and submit to client --------------
         cleaned_text = talk.clean_emotion_action_text_for_speech(current_converse[-1]) # clean text for speech
+        
+        translated = '' # initialize translated text as empty by default
         if translation:
             translated = translator.translate(cleaned_text) # translate to [language] if translation is enabled
 
