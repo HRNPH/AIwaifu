@@ -69,6 +69,9 @@ class OpenJtalk:
 class Gtts:
     def __init__(self) -> None:
         from gtts import gTTS
+        # disable gtts debug
+        import logging
+        logging.getLogger('gtts').setLevel(logging.CRITICAL)
 
         self.model_name = "gtts"
         self.sr = 48000
