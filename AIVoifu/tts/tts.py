@@ -82,8 +82,8 @@ class Gtts:
         return ['af', 'ar', 'bg', 'bn', 'bs', 'ca', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr', 'gu', 'hi', 'hr', 'hu', 'id', 'is', 'it', 'iw', 'ja', 'jw', 'km', 'kn', 'ko', 'la', 'lv', 'ml', 'mr', 'ms', 'my', 'ne', 'nl', 'no', 'pl', 'pt', 'ro', 'ru', 'si', 'sk', 'sq', 'sr', 'su', 'sv', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'zh-CN', 'zh-TW', 'zh']
     
 class auto_tts: # add your tts model mapping 'key' here
-    possible_model = Literal[f"khanomtal11", "openjtalk", "gtts"]
-    # possible_model = Literal['key', 'key2', 'key3', ...]
+    possible_model = Literal["openjtalk", "gtts"]
+    # possible_model = Literal['khanomtal11', 'key2', 'key3', ...]
     def __init__(
         self,
         model_selection: possible_model=None
