@@ -112,7 +112,7 @@ python ./main.py
 
 # Code Of Conduct
 - Everything We Made Is OpenSourced, Free & Customizable To the Very Core
-- We'll never include proprietary Model (ChatGPT/ETC...) since it'll conflict with what we state above
+- We'll never include proprietary Model (ChatGPT/ETC...) since it'll conflict with what we state above And It Censor Lewd Stuff So, no lol
 
 # How Can I help?
 Take a look at the issue & feel free to ask question or suggest new features or tests our model to the limit!
