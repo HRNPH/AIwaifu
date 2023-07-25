@@ -84,8 +84,8 @@ class vits_vc_inference:
         print(f'Using model {pretrain_model_path}')
         # load content encoder
         self.hubert = torch.hub.load("bshall/hubert:main", "hubert_soft")
-        # load synthesizer
-        # self.hps = utils.get_hparams_from_file(f"{file_root}/Sovits/configs/sovits.json") # load config
+        # load synthesizer, construct model and load checkpoint + config
+        print(f'Loading config from {pretrain_model_config_path}')
         self.hps = utils.get_hparams_from_file(pretrain_model_config_path) # load config
         self.net_g = SynthesizerTrn(
             self.hps.data.filter_length // 2 + 1,
