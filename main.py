@@ -59,49 +59,35 @@ while True:
         continue # reset story skip to next loop
 
     # ----------- Create Response --------------------------
-    answer = chat(con) # send message to api
-    answer = answer.split('<split_token>')
-    answer, translated_answer = answer[0], answer[1]
+    emo_answer = chat(con).replace("\"","") # send message to api
+    emo, answer = emo_answer.split("<split_token>")
+    print(emo)
+    print(answer)
+    if len(answer) > 2:
+        use_answer = answer
 
-    use_answer = answer # use translated answer if available
-    if len(translated_answer) > 2:
-        use_answer = translated_answer
+        # ------------------------------------------------------
+        print(f'Answer: {answer}')
+        if answer.strip().endswith(f'{talk.name}:') or answer.strip() == '':
+            continue # skip audio processing if the answer is just the name (no talking)
 
-    answer.replace('Lilia:', '') # remove name from answer
-    # ------------------------------------------------------
-    print(f'{answer}')
-    if answer.strip().endswith(f'{talk.name}:') or answer.strip() == '':
-        continue # skip audio processing if the answer is just the name (no talking)
+        # ----------- Waifu Create Talking Audio -----------------------
+        vocal_pipeline.tts(use_answer, save_path=f'./audio_cache/dialog_cache.wav', voice_conversion=False)  # todo **tt set voice_conversion=true for VC
+        # --------------------------------------------------
 
-    # ----------- Waifu Create Talking Audio -----------------------
-    vocal_pipeline.tts(use_answer, save_path=f'./audio_cache/dialog_cache.wav')
-    # --------------------------------------------------
-    
-    # ----------- Waifu Talking -----------------------
-    # play audio directly from cache
-    p = pyaudio.PyAudio()
-    data, samplerate = sf.read('./audio_cache/dialog_cache.wav', dtype='float32')
-    stream = p.open(format=pyaudio.paFloat32,
-                    channels=1,
-                    rate=samplerate,
-                    output=True)
-    stream.write(data.tobytes())
-    stream.stop_stream()
-    stream.close()
+        # ----------- Waifu Talking -----------------------
+        # play audio directly from cache
+        p = pyaudio.PyAudio()
+        data, samplerate = sf.read('./audio_cache/dialog_cache.wav', dtype='float32')
+        stream = p.open(format=pyaudio.paFloat32,
+                        channels=1,
+                        rate=samplerate,
+                        output=True)
+        stream.write(data.tobytes())
+        stream.stop_stream()
+        stream.close()
 
-    # --------------------------------------------------
-
-    # ----------- Waifu Expressing ----------------------- (emotion expressed)
-    emotion = talk.emotion_analyze(answer) # get emotion from waifu answer (last line)
-    print(f'Emotion Log: {emotion}')
-    emotion_to_express = None
-    if 'joy' in emotion:
-        emotion_to_express = 'happy'
-
-    elif 'anger' in emotion:
-        emotion_to_express = 'angry'
-
-    print(f'Emotion to express: {emotion_to_express}')
-    if emotion_to_express: ## express emotion
-        waifu.express(emotion_to_express) # express emotion in Vtube Studio
-    # --------------------------------------------------
+        # --------------------------------------------------
+        if emo:  ## express emotion
+            waifu.express(emo)  # express emotion in Vtube Studio
+        # --------------------------------------------------

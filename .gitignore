@@ -9,3 +9,4 @@
 audio_cache/dialog_cache.wav
 *.wav
 \models
+.idea

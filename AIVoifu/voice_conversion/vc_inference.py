@@ -90,7 +90,7 @@ class vits_vc_inference:
         self.net_g = SynthesizerTrn(
             self.hps.data.filter_length // 2 + 1,
             self.hps.train.segment_size // self.hps.data.hop_length,
-            n_speakers=self.hps.data.n_speakers,
+            # n_speakers=self.hps.data.n_speakers,
             **self.hps.model)
         _ = self.net_g.eval()
         _ = utils.load_checkpoint(f"{pretrain_model_pth_path}", self.net_g, None)
