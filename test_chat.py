@@ -64,15 +64,20 @@ def run(prompt):
 
     if response.status_code == 200:
         result = response.json()['results'][0]['text']
-        print(prompt + result)
-        
+        #print(prompt + result)
+        return prompt + result
 # ---------- Config ----------
 translation = bool(input("Enable translation? (Y/n): ").lower() in {'y', ''})
 
 print("Use oobabooga api? (Y/n): ")
 if input().lower() == 'y':
     oobabooga_api = True
-    
+    response = requests.post(f'http://{HOST}/api/v1/model', json={'action': 'info'})
+    if response.status_code != 200:
+        print("API status_code != 200, oobabooga_api = False") 
+        oobabooga_api = False
+    else:
+        print("Connected to oobabooga API!")
 else:
     oobabooga_api = False
     
@@ -92,20 +97,20 @@ if oobabooga_api == False:
             device = torch.device('cpu')
 
 # ---------- load Conversation model ----------
-    print("Initilizing model....")
-    print("Loading language model...")
-    tokenizer = AutoTokenizer.from_pretrained("PygmalionAI/pygmalion-1.3b", use_fast=True)
-    config = AutoConfig.from_pretrained("PygmalionAI/pygmalion-1.3b", is_decoder=True)
-    model = AutoModelForCausalLM.from_pretrained("PygmalionAI/pygmalion-1.3b", config=config, )
+        print("Initilizing model....")
+        print("Loading language model...")
+        tokenizer = AutoTokenizer.from_pretrained("PygmalionAI/pygmalion-1.3b", use_fast=True)
+        config = AutoConfig.from_pretrained("PygmalionAI/pygmalion-1.3b", is_decoder=True)
+        model = AutoModelForCausalLM.from_pretrained("PygmalionAI/pygmalion-1.3b", config=config, )
 
-    if use_gpu:  # load model to GPU
-        model = model.to(device)
-        print("Inference at half precision? (Y/N)")
-        if input().lower() == 'y':
-            print("Loading model at half precision...")
-            model.half()
-        else:
-            print("Loading model at full precision...")
+        if use_gpu:  # load model to GPU
+            model = model.to(device)
+            print("Inference at half precision? (Y/N)")
+            if input().lower() == 'y':
+                print("Loading model at half precision...")
+                model.half()
+            else:
+                print("Loading model at full precision...")
 
 if translation:
     print("Translation enabled!")
@@ -136,16 +141,19 @@ def get_waifuapi(command: str, data: str):
         # ----------- Create Response --------------------------
         msg = talk.construct_msg(msg, talk.history_loop_cache)  # construct message input and cache History model
         ## ----------- Will move this to server later -------- (16GB ram needed at least)
-        inputs = tokenizer(msg, return_tensors='pt')
-        if use_gpu:
-            inputs = inputs.to(device)
-        print("generate output ..\n")
-        out = model.generate(**inputs, max_length=len(inputs['input_ids'][0]) + 80, #todo 200 ?
-                             pad_token_id=tokenizer.eos_token_id, do_sample=True, top_k=50, top_p=0.95)
-        conversation = tokenizer.batch_decode(out, skip_special_tokens=True)
-        print(conversation)
-        # print("conversation .. \n" + conversation)
-
+        if oobabooga_api == False:
+            inputs = tokenizer(msg, return_tensors='pt')
+            if use_gpu:
+                inputs = inputs.to(device)
+            print("generate output ..\n")
+            out = model.generate(**inputs, max_length=len(inputs['input_ids'][0]) + 80, #todo 200 ?
+                                pad_token_id=tokenizer.eos_token_id, do_sample=True, top_k=50, top_p=0.95)
+            conversation = tokenizer.batch_decode(out, skip_special_tokens=True)
+            print(conversation)
+            # print("conversation .. \n" + conversation)
+        else:
+            inputs = msg
+            conversation = run(inputs)
         ## --------------------------------------------------
 
         ## get conversation in proper format and create history from [last_idx: last_idx+2] conversation
