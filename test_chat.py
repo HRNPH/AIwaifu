@@ -8,38 +8,104 @@ import scipy.io.wavfile as wavfile
 import torch
 import wget
 
+# ----- oobabooga Config -----
+import requests
+
+# For local streaming, the websockets are hosted without ssl - http://
+HOST = 'localhost:5000'
+URI = f'http://{HOST}/api/v1/generate'
+
+# For reverse-proxied streaming, the remote will likely host with ssl - https://
+# URI = 'https://your-uri-here.trycloudflare.com/api/v1/generate'
+
+
+def run(prompt):
+    request = {
+        'prompt': prompt,
+        'max_new_tokens': 250,
+        'auto_max_new_tokens': False,
+        'max_tokens_second': 0,
+
+        # Generation params. If 'preset' is set to different than 'None', the values
+        # in presets/preset-name.yaml are used instead of the individual numbers.
+        'preset': 'None',
+        'do_sample': True,
+        'temperature': 0.7,
+        'top_p': 0.1,
+        'typical_p': 1,
+        'epsilon_cutoff': 0,  # In units of 1e-4
+        'eta_cutoff': 0,  # In units of 1e-4
+        'tfs': 1,
+        'top_a': 0,
+        'repetition_penalty': 1.18,
+        'repetition_penalty_range': 0,
+        'top_k': 40,
+        'min_length': 0,
+        'no_repeat_ngram_size': 0,
+        'num_beams': 1,
+        'penalty_alpha': 0,
+        'length_penalty': 1,
+        'early_stopping': False,
+        'mirostat_mode': 0,
+        'mirostat_tau': 5,
+        'mirostat_eta': 0.1,
+        'guidance_scale': 1,
+        'negative_prompt': '',
+
+        'seed': -1,
+        'add_bos_token': True,
+        'truncation_length': 2048,
+        'ban_eos_token': False,
+        'skip_special_tokens': True,
+        'stopping_strings': []
+    }
+
+    response = requests.post(URI, json=request)
+
+    if response.status_code == 200:
+        result = response.json()['results'][0]['text']
+        print(prompt + result)
+        
 # ---------- Config ----------
 translation = bool(input("Enable translation? (Y/n): ").lower() in {'y', ''})
 
-device = torch.device('cpu')  # default to cpu
-use_gpu = torch.cuda.is_available()
-print("Detecting GPU...")
-if use_gpu:
-    print("GPU detected!")
-    device = torch.device('cuda')
-    print("Using GPU? (Y/N)")
-    if input().lower() == 'y':
-        print("Using GPU...")
-    else:
-        print("Using CPU...")
-        use_gpu = False
-        device = torch.device('cpu')
+print("Use oobabooga api? (Y/n): ")
+if input().lower() == 'y':
+    oobabooga_api = True
+    
+else:
+    oobabooga_api = False
+    
+if oobabooga_api == False:
+    device = torch.device('cpu')  # default to cpu
+    use_gpu = torch.cuda.is_available()
+    print("Detecting GPU...")
+    if use_gpu:
+        print("GPU detected!")
+        device = torch.device('cuda')
+        print("Using GPU? (Y/N)")
+        if input().lower() == 'y':
+            print("Using GPU...")
+        else:
+            print("Using CPU...")
+            use_gpu = False
+            device = torch.device('cpu')
 
 # ---------- load Conversation model ----------
-print("Initilizing model....")
-print("Loading language model...")
-tokenizer = AutoTokenizer.from_pretrained("PygmalionAI/pygmalion-1.3b", use_fast=True)
-config = AutoConfig.from_pretrained("PygmalionAI/pygmalion-1.3b", is_decoder=True)
-model = AutoModelForCausalLM.from_pretrained("PygmalionAI/pygmalion-1.3b", config=config, )
+    print("Initilizing model....")
+    print("Loading language model...")
+    tokenizer = AutoTokenizer.from_pretrained("PygmalionAI/pygmalion-1.3b", use_fast=True)
+    config = AutoConfig.from_pretrained("PygmalionAI/pygmalion-1.3b", is_decoder=True)
+    model = AutoModelForCausalLM.from_pretrained("PygmalionAI/pygmalion-1.3b", config=config, )
 
-if use_gpu:  # load model to GPU
-    model = model.to(device)
-    print("Inference at half precision? (Y/N)")
-    if input().lower() == 'y':
-        print("Loading model at half precision...")
-        model.half()
-    else:
-        print("Loading model at full precision...")
+    if use_gpu:  # load model to GPU
+        model = model.to(device)
+        print("Inference at half precision? (Y/N)")
+        if input().lower() == 'y':
+            print("Loading model at half precision...")
+            model.half()
+        else:
+            print("Loading model at full precision...")
 
 if translation:
     print("Translation enabled!")
