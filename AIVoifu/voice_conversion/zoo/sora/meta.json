@@ -1,0 +1,8 @@
+{
+    "DESCRIPTION": "sora",
+    "ORIGIN": "https://huggingface.co/TachibanaKimika/so-vits-svc-4.0-models/tree/main",
+    "AUTHOR": "TachibanaKimika",
+    "LICENSE": "MIT",
+    "MODEL_LINK": "https://huggingface.co/TachibanaKimika/so-vits-svc-4.0-models/resolve/main/sora/G_sora_100.pth",
+    "CONFIG_LINK": "https://huggingface.co/TachibanaKimika/so-vits-svc-4.0-models/resolve/main/sora/config.json"
+}

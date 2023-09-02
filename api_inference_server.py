@@ -1,23 +1,17 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig, AutoModelForSeq2SeqLM
-from conversation import character_msg_constructor
+from Conversation.conversation import character_msg_constructor
+from Conversation.translation.pipeline import Translate
 from AIVoifu.tts import tts # text to speech from huggingface
 from vtube_studio import Char_control
 import romajitable # temporary use this since It'll blow up our ram if we use Machine Translation Model
-from playsound import playsound # play talking sound
 import scipy.io.wavfile as wavfile
 import torch
 import wget 
-setup()
 
-# ---------- load Conversation model ----------
-# ----------- Will move this to server later -------- (16GB ram needed at least) for 1.3b
-# tokenizer = AutoTokenizer.from_pretrained("PygmalionAI/pygmalion-350m")
-# config = AutoConfig.from_pretrained("PygmalionAI/pygmalion-350m")
-# config.is_decoder = True
-# model = AutoModelForCausalLM.from_pretrained("PygmalionAI/pygmalion-350m", config=config)
-# load model at half precision
+# ---------- Config ----------
+translation = bool(input("Enable translation? (Y/n): ").lower() in {'y', ''})
 
-# ---------- load Conversation model ----------
+device = torch.device('cpu') # default to cpu
 use_gpu = torch.cuda.is_available()
 print("Detecting GPU...")
 if use_gpu:
@@ -31,6 +25,7 @@ if use_gpu:
         use_gpu = False
         device = torch.device('cpu')
 
+# ---------- load Conversation model ----------
 print("Initilizing model....")
 print("Loading language model...")
 tokenizer = AutoTokenizer.from_pretrained("PygmalionAI/pygmalion-1.3b", use_fast=True)
@@ -46,12 +41,13 @@ if use_gpu: # load model to GPU
   else:
       print("Loading model at full precision...")
 
-print("Loading machine translation model...")
-lmtokenizer = AutoTokenizer.from_pretrained("facebook/nllb-200-distilled-600M", use_fast=True)
-lmmodel = AutoModelForSeq2SeqLM.from_pretrained("facebook/nllb-200-distilled-600M")
-
-if use_gpu: # load model to GPU
-  lmmodel = lmmodel.to(device)
+if translation:
+    print("Translation enabled!")
+    print("Loading machine translation model...")
+    translator = Translate(device, language="jpn_Jpan") # initialize translator #todo **tt fix translation
+else:
+    print("Translation disabled!")
+    print("Proceeding... wtih pure english conversation")
 
 print('--------Finished!----------')
 # --------------------------------------------------
@@ -81,6 +77,59 @@ async def get_waifuapi(command: str, data: str):
     if command == "chat":
         msg = data
         # ----------- Create Response --------------------------
+        msg = talk.construct_msg(msg, talk.history_loop_cache)  # construct message input and cache History model
+        ## ----------- Will move this to server later -------- (16GB ram needed at least)
+        inputs = tokenizer(msg, return_tensors='pt')
+        if use_gpu:
+            inputs = inputs.to(device)
+        print("generate output ..\n")
+        out = model.generate(**inputs, max_length=len(inputs['input_ids'][0]) + 80, #todo 200 ?
+                             pad_token_id=tokenizer.eos_token_id)
+        conversation = tokenizer.decode(out[0])
+        print("conversation .. \n" + conversation)
+
+        ## --------------------------------------------------
+
+        ## get conversation in proper format and create history from [last_idx: last_idx+2] conversation
+        # talk.split_counter += 0
+        print("get_current_converse ..\n")
+        current_converse = talk.get_current_converse(conversation)
+        print("answer ..\n") # only print waifu answer since input already show
+        print(current_converse)
+        # talk.history_loop_cache = '\n'.join(current_converse)  # update history for next input message
+
+        # -------------- use machine translation model to translate to japanese and submit to client --------------
+        print("cleaning ..\n")
+        cleaned_text = talk.clean_emotion_action_text_for_speech(current_converse[1])  # clean text for speech
+        cleaned_text = cleaned_text.split("Lilia: ")[-1]
+        cleaned_text = cleaned_text.replace("<USER>", "Fuse-kun")
+        cleaned_text = cleaned_text.replace("\"", "")
+        if cleaned_text:
+            print("cleaned_text\n"+ cleaned_text)
+
+            txt = cleaned_text  # initialize translated text as empty by default
+            if translation:
+                txt = translator.translate(cleaned_text)  # translate to [language] if translation is enabled
+                print("translated\n" + txt)
+
+            # ----------- Waifu Expressing ----------------------- (emotion expressed)
+            emotion = talk.emotion_analyze(current_converse[1])  # get emotion from waifu answer (last line)
+            print(f'Emotion Log: {emotion}')
+            emotion_to_express = 'netural'
+            if 'joy' in emotion:
+                emotion_to_express = 'happy'
+
+            elif 'anger' in emotion:
+                emotion_to_express = 'angry'
+
+            print(f'Emotion to express: {emotion_to_express}')
+
+            return JSONResponse(content=f'{emotion_to_express}<split_token>{txt}')
+        else:
+            return JSONResponse(content=f'NONE<split_token> ')
+    elif command == "story":
+        msg = data
+        # ----------- Create Response --------------------------
         msg = talk.construct_msg(msg, talk.history_loop_cache) # construct message input and cache History model
         ## ----------- Will move this to server later -------- (16GB ram needed at least)
         inputs = tokenizer(msg, return_tensors='pt')
@@ -88,21 +137,22 @@ async def get_waifuapi(command: str, data: str):
             inputs = inputs.to(device)
         out = model.generate(**inputs, max_length=len(inputs['input_ids'][0]) + 100, pad_token_id=tokenizer.eos_token_id)
         conversation = tokenizer.decode(out[0])
+        print("conversation" + conversation)
+
         ## --------------------------------------------------
 
         ## get conversation in proper format and create history from [last_idx: last_idx+2] conversation
-        talk.split_counter += 2
+        talk.split_counter += 0
         current_converse = talk.get_current_converse(conversation)[:talk.split_counter][talk.split_counter-2:talk.split_counter]
-        print(conversation) # only print waifu answer since input already show
+        print("answer" + conversation) # only print waifu answer since input already show
         talk.history_loop_cache = '\n'.join(current_converse) # update history for next input message
 
         # -------------- use machine translation model to translate to japanese and submit to client --------------
         cleaned_text = talk.clean_emotion_action_text_for_speech(current_converse[-1]) # clean text for speech
-        inputs = lmtokenizer([cleaned_text], return_tensors='pt')
-        if use_gpu:
-            inputs = inputs.to(device)
-        outs = lmmodel.generate(**inputs, forced_bos_token_id=lmtokenizer.lang_code_to_id['jpn_Jpan'])
-        translated = lmtokenizer.batch_decode(outs, skip_special_tokens=True)[0]
+        
+        translated = '' # initialize translated text as empty by default
+        if translation:
+            translated = translator.translate(cleaned_text) # translate to [language] if translation is enabled
 
         return JSONResponse(content=f'{current_converse[-1]}<split_token>{translated}')
     

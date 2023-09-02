@@ -92,10 +92,10 @@ class Char_control(MBIS_vtube):
         if expression_dict is None:
             expression_dict = {
                 "netural": None,
-                "agree": "N1",
+                "agree": "N3",
                 "wonder": "N2",
-                "shy": "N3",
-                "happy": "N4",
+                "shy": "N4",
+                "happy": "N1",
                 "sad": "N5",
             } # This need to be updated to match your expressions in VTube Studio
     
@@ -118,6 +118,7 @@ class Char_control(MBIS_vtube):
             msg = {
                 "hotkeyID": hotkey_id,
             }
+            print("sending key ...")
             result = self.send("HotkeyTriggerRequest", msg)
             return result
 
