@@ -139,4 +139,4 @@ class vits_vc_inference:
             return selected_model_name, meta['MODEL_LINK'], meta['CONFIG_LINK']
         else:
             print('Invalid model name. Please try again.')
-            return self.__load_model_from_zoo()
+            return self.__select_model_from_zoo()
