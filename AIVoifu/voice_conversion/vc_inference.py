@@ -133,7 +133,7 @@ class vits_vc_inference:
         
         selected_model_name = input('Select model(from_name): ')
         # validate model name
-        if selected_model_name in model_names:
+        if selected_model_name.strip() in model_names:
             print(f'Selected model: {selected_model_name}')
             meta = json.load(open(f'{self.zoo_path}/{selected_model_name}/meta.json', 'r'))
             return selected_model_name, meta['MODEL_LINK'], meta['CONFIG_LINK']
