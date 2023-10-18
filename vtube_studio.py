@@ -118,7 +118,6 @@ class Char_control(MBIS_vtube):
             msg = {
                 "hotkeyID": hotkey_id,
             }
-            print("sending key ...")
             result = self.send("HotkeyTriggerRequest", msg)
             return result
 
