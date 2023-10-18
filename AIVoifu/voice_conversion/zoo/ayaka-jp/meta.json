@@ -1,0 +1,9 @@
+{
+    "DESCRIPTION": "ayaka-rvc",
+    "ORIGIN": "https://huggingface.co/spaces/zomehwh/rvc-models/tree/main/weights/ayaka-jp",
+    "AUTHOR": "zomehwh",
+    "LICENSE": "MIT",
+    "CHECKPOINT_LINK": "https://huggingface.co/spaces/zomehwh/rvc-models/resolve/main/weights/ayaka-jp/ayaka-jp.pth",
+    "FEATURE_RETRIEVAL_LIBRARY_LINK": "https://huggingface.co/spaces/zomehwh/rvc-models/resolve/main/weights/ayaka-jp/added_IVF1830_Flat_nprobe_9.index",
+    "FEATURE_FILE_LINK": "https://huggingface.co/spaces/zomehwh/rvc-models/resolve/main/weights/ayaka-jp/total_fea.npy"
+}
