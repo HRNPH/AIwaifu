@@ -16,7 +16,7 @@ class tts_pipeline:
         self.model.tts(text, save_path)
         # voice conversion
         if voice_conversion:
-            self.vc_model.convert(save_path, save_path=save_path)
+            self.vc_model.convert(save_path, save_path=save_path, vc_transpose=3)
         return save_path
     
 
