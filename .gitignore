@@ -11,3 +11,4 @@ audio_cache/dialog_cache.wav
 \models
 .idea
 .DS_Store
+*.pt

@@ -95,11 +95,14 @@ torchaudio = "^2.0.2"
 wget = "^3.2"
 pysentimiento = "^0.7.1"
 pyaudio = "^0.2.13"
-pyopenjtalk = "^0.3.0"
 wheel = "^0.40.0"
 fastapi = "^0.100.0"
 uvicorn = "^0.22.0"
 gtts = "^2.3.2"
+fairseq = "^0.12.2"
+praat-parselmouth = "^0.4.3"
+pyworld = "^0.3.4"
+faiss-cpu = "^1.7.4"
 
 
 [build-system]

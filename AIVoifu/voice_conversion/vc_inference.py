@@ -3,32 +3,35 @@ import json
 import math
 import wget
 from glob import glob
+import soundfile as sf # used to save audio
 import torch
 import torchaudio
-from torch import nn
-from torch.nn import functional as F
-from torch.utils.data import DataLoader
-
-from .Sovits import utils
-from .Sovits.data_utils import UnitAudioLoader, UnitAudioCollate
-from .Sovits.models import SynthesizerTrn
+from .RVC.infer_pack.models import SynthesizerTrnMs256NSFsid, SynthesizerTrnMs256NSFsid_nono
+from .RVC.python_inference import load_hubert, create_vc_fn, VC
+from .RVC.config import (
+    is_half,
+    device
+)
 from scipy.io.wavfile import write
 from torchaudio.functional import resample
 torchaudio.set_audio_backend("soundfile") # use soundfile backend, due to error with sox backend
 
-class vits_vc_inference:
+class vc_inference:
     def __init__(self, force_load_model=False, F0=None) -> None:
         file_root = os.path.dirname(os.path.abspath(__file__))
+        self.config_path = f'{file_root}/config.json'
         self.zoo_path = f'{file_root}/zoo/'
         
         print("Initializing Waifu Voice Conversion Pipeline...")
         # ask if download zoo model or select from local
         want_to_use_zoo = input('Download New model from zoo? (Y/n): ').lower() in ['y', '']
         if want_to_use_zoo:
-            name, model_link, config_link = self.__select_model_from_zoo()
+            name, checkpoint_link, feature_retrieval_library_link, feature_file_link = self.__select_model_from_zoo()
             self.pretrain_model_name = name
-            self.model_link = model_link
-            self.config_link = config_link
+            self.checkpoint_link = checkpoint_link
+            self.feature_retrieval_library_link = feature_retrieval_library_link
+            self.feature_file_link = feature_file_link
+
         else:
             print('No zoo model selected. Using local/cached model...')
             
@@ -39,30 +42,38 @@ class vits_vc_inference:
             if not force_load_model:
                 print('No checkpoint detected. Downloading checkpoint...')
                 print(f'Using model: {self.pretrain_model_name}')
-                print(f'Link: {self.model_link}')
+                print(f'Link: {self.checkpoint_link}')
                 load_checkpoint = input('Load checkpoint? (Y/n): ').lower() in ['y', '']
 
             if load_checkpoint:
                 print('Downloading checkpoint...')
-                print(f'Link: {self.model_link}')
-                save_model_at = f'{self.model_root}/{self.pretrain_model_name}/model.pth'
-                save_config_at = f'{self.model_root}/{self.pretrain_model_name}/config.json'
-                if os.path.exists(save_model_at):
+                print(f'Link: {self.checkpoint_link}')
+                save_checkpoint_at = f'{self.model_root}/{self.pretrain_model_name}/model.pth'
+                save_feature_retrieval_library_at = f'{self.model_root}/{self.pretrain_model_name}/feature_retrieval_library.index'
+                save_feature_file_at = f'{self.model_root}/{self.pretrain_model_name}/feature.npy'
+                if os.path.exists(save_checkpoint_at):
                     print('Removing old checkpoint...')
-                    print(f'Path: {save_model_at}')
-                    os.remove(save_model_at)
+                    print(f'Path: {save_checkpoint_at}')
+                    os.remove(save_checkpoint_at)
                 print(f'loading new model...')
-                print(f'Saving checkpoint to {save_model_at}')
-                wget.download(self.model_link, save_model_at)
+                print(f'Saving checkpoint to {save_checkpoint_at}')
+                wget.download(self.checkpoint_link, save_checkpoint_at)
 
-                if os.path.exists(save_config_at):
-                    print('Removing old config...')
-                    print(f'Path: {save_config_at}')
-                    os.remove(save_config_at)
-                print('Downloading config...')
-                print(f'Link: {self.config_link}')
-                print(f'Saving config to {save_config_at}')
-                wget.download(self.config_link, save_config_at)
+                if os.path.exists(save_feature_retrieval_library_at):
+                    print('Removing old feature retrieval library...')
+                    print(f'Path: {save_feature_retrieval_library_at}')
+                    os.remove(save_feature_retrieval_library_at)
+                print('Downloading feature retrieval library...')
+                print(f'Saving feature retrieval library to {save_feature_retrieval_library_at}')
+                wget.download(self.feature_retrieval_library_link, save_feature_retrieval_library_at)
+
+                if os.path.exists(save_feature_file_at):
+                    print('Removing old feature file...')
+                    print(f'Path: {save_feature_file_at}')
+                    os.remove(save_feature_file_at)
+                print('Downloading feature file...')
+                print(f'Saving feature file to {save_feature_file_at}')
+                wget.download(self.feature_file_link, save_feature_file_at)
 
         model_list = glob(f'{file_root}/models/*/')
         if len(model_list) > 1:
@@ -79,45 +90,76 @@ class vits_vc_inference:
 
         # selected model
         pretrain_model_pth_path = f'{pretrain_model_path}/model.pth'
-        pretrain_model_config_path = f'{pretrain_model_path}/config.json'
-        
+        pretrain_model_feature_retrieval_library_path = f'{pretrain_model_path}/feature_retrieval_library.index'
+        pretrain_model_feature_file_path = f'{pretrain_model_path}/feature.npy'
         print(f'Using model {pretrain_model_path}')
-        # load content encoder
-        self.hubert = torch.hub.load("bshall/hubert:main", "hubert_soft")
-        # load synthesizer, construct model and load checkpoint + config
-        print(f'Loading config from {pretrain_model_config_path}')
-        self.hps = utils.get_hparams_from_file(pretrain_model_config_path) # load config
-        self.net_g = SynthesizerTrn(
-            self.hps.data.filter_length // 2 + 1,
-            self.hps.train.segment_size // self.hps.data.hop_length,
-            # n_speakers=self.hps.data.n_speakers,
-            **self.hps.model)
-        _ = self.net_g.eval()
-        _ = utils.load_checkpoint(f"{pretrain_model_pth_path}", self.net_g, None)
+
+        # load content encoder (Hubert)
+        huber_path = f'{file_root}/hubert.pt'
+        Load_Hubert = False
+        if not os.path.exists(huber_path):
+            Load_Hubert = True
+        else:
+            print('Hubert model already exists. want to download a new one?')
+            if input('(Y/n): ').lower() in ['y', '']:
+                self.__load_hubert_model(file_root)
+                Load_Hubert = True
+
+        if Load_Hubert:
+            print('Downloading Hubert...')
+            hubert_model_name, hubert_checkpoint_link = self.__selet_hubert_model()
+            if os.path.exists(huber_path):
+                print('Removing old Hubert model...')
+                print(f'Path: {huber_path}')
+                os.remove(f'{file_root}/hubert.pt')
+
+            print('Downloading Hubert...')
+            print(f'Using model: {hubert_model_name}')
+            print(f'Link: {hubert_checkpoint_link}')
+            wget.download(hubert_checkpoint_link, huber_path)
+        else:
+            print('Using cached Hubert model...')
+
+        load_hubert(huber_path)
+
+        # load pretrain model
+        print('Loading pretrain model...')
+        cpt = torch.load(pretrain_model_pth_path, map_location="cpu")
+        tgt_sr = cpt["config"][-1] # target sample rate
+        cpt["config"][-3] = cpt["weight"]["emb_g.weight"].shape[0]  # n_spk
+        if_f0 = cpt.get("f0", 1)
+        if if_f0 == 1:
+            net_g = SynthesizerTrnMs256NSFsid(*cpt["config"], is_half=is_half)
+        else:
+            net_g = SynthesizerTrnMs256NSFsid_nono(*cpt["config"])
+        del net_g.enc_q
+        print(net_g.load_state_dict(cpt["weight"], strict=False))  # 不加这一行清不干净, 真奇葩
+        net_g.eval().to(device)
+        if is_half:
+            net_g = net_g.half()
+        else:
+            net_g = net_g.float()
+        vc = VC(tgt_sr, device, is_half)
+        # create voice conversion function
+        self.vc_fn = create_vc_fn(tgt_sr, net_g, vc, if_f0, pretrain_model_feature_retrieval_library_path, pretrain_model_feature_file_path)
+
+    def convert(self, audio_path: str, save_path=None, vc_transpose: int = 0, vc_f0method: str = "harvest", vc_index_ratio: int = 0.6):
+        if vc_f0method not in ["harvest", "pm"]: # Pitch extraction algorithm, PM is fast but Harvest is better for low frequencies",
+            print("Pitch extraction algorithm, PM is fast but Harvest is better for low frequencies")
+            raise ValueError("vc_f0method must be one of ['harvest', 'pm']")
+        # info, audio = vc_fn(vc_input, vc_transpose, vc_f0method[1], vc_index_ratio)
+        info, audio = self.vc_fn(audio_path, vc_transpose, vc_f0method, vc_index_ratio)
+        sample_rate, audio_data = audio
+        if (sample_rate is None) or (audio_data is None):
+            raise ValueError("Audio data is None, There's probably some shit wrong with the Model you downloaded, Please Report it in the repo!")
+        if not save_path:
+            save_path = "output.wav"
+        sf.write(save_path, audio[1], audio[0])
+        return audio_data, sample_rate
     
-    def convert(self, audio, sr:int, from_file=False, save_path=None, F0=None):
-        if from_file:
-            audio, sr = torchaudio.load(audio)
-        resampled_sr = 22050
-        resampled = resample(audio, sr, resampled_sr)
-        source = resampled.unsqueeze(0)
-        with torch.inference_mode():
-            # Extract speech units
-            unit = self.hubert.units(source)
-            unit_lengths = torch.LongTensor([unit.size(1)])
-            # for multi-speaker inference
-            # sid = torch.LongTensor([4])
-            # Synthesize audio
-            audio = self.net_g.infer(unit, unit_lengths, F0=F0, noise_scale=.667, noise_scale_w=0.8, length_scale=1.0)[0][0,0].data.float().numpy()
-            # for multi-speaker inference
-            # audio = net_g.infer(unit, unit_lengths, sid, noise_scale=.667, noise_scale_w=0.8, length_scale=1.0)[0][0,0].data.float().numpy()
-        if save_path:
-            write(save_path, resampled_sr, audio)
-        return audio, resampled_sr
-    
-    def __select_model_from_zoo(self) -> "tuple[str, str, str]":
+    def __select_model_from_zoo(self) -> "tuple[str, str, str, str]":
         """
-        return: (model_name, model_link, config_link)
+        return: (model_name, checkpoint_link, feature_retrieval_library_link, feature_file_link)
         """
         print('---- List available Waifu Voice models from zoo... ----')
         model_names:list[str] = []
@@ -136,7 +178,39 @@ class vits_vc_inference:
         if selected_model_name.strip() in model_names:
             print(f'Selected model: {selected_model_name}')
             meta = json.load(open(f'{self.zoo_path}/{selected_model_name}/meta.json', 'r'))
-            return selected_model_name, meta['MODEL_LINK'], meta['CONFIG_LINK']
+            return selected_model_name, meta['CHECKPOINT_LINK'], meta['FEATURE_RETRIEVAL_LIBRARY_LINK'], meta['FEATURE_FILE_LINK']
         else:
             print('Invalid model name. Please try again.')
             return self.__select_model_from_zoo()
+        
+    def __selet_hubert_model(self) -> "tuple[str, str]":
+        """
+        return: (model_name, checkpoint_link)
+        """
+        print('---- List available Hubert models... ----')
+        model_names:list[str] = []
+        model_map = {}
+        # read from config
+        with open(self.config_path, 'r') as f:
+            config = json.load(f)
+            for model in config['hubert_models']:
+                print('-', model['NAME'])
+                print('  - Author:', model['AUTHOR'])
+                print('  - Checkpoint:', model['CHECKPOINT_LINK'])
+                print('------------')
+                model_names.append(model['NAME'])
+                model_meta = {
+                    'NAME': model['NAME'],
+                    'AUTHOR': model['AUTHOR'],
+                    'CHECKPOINT_LINK': model['CHECKPOINT_LINK']
+                }
+                model_map[model['NAME']] = model_meta
+
+        selected_model_name = input('Select model(from_name): ')
+        # validate model name
+        if selected_model_name.strip() in model_names:
+            print(f'Selected model: {selected_model_name}')
+            return selected_model_name, model_map[selected_model_name]['CHECKPOINT_LINK']
+        else:
+            print('Invalid model name. Please try again.')
+            return self.__selet_hubert_model()

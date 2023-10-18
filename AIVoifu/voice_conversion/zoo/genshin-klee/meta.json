@@ -1,8 +1,0 @@
-{
-    "DESCRIPTION": "so-vits-genshin klee",
-    "ORIGIN": "https://huggingface.co/kaze-mio/so-vits-genshin/tree/main",
-    "AUTHOR": "kaze-mio",
-    "LICENSE": "MIT",
-    "MODEL_LINK": "https://huggingface.co/kaze-mio/so-vits-genshin/resolve/main/klee/klee_G_40000.pth",
-    "CONFIG_LINK": "https://huggingface.co/kaze-mio/so-vits-genshin/resolve/main/klee/klee.json"
-}

@@ -61,8 +61,7 @@ while True:
     # ----------- Create Response --------------------------
     emo_answer = chat(con).replace("\"","") # send message to api
     emo, answer = emo_answer.split("<split_token>")
-    print(emo)
-    print(answer)
+    print("**"+emo)
     if len(answer) > 2:
         use_answer = answer
 
@@ -72,7 +71,7 @@ while True:
             continue # skip audio processing if the answer is just the name (no talking)
 
         # ----------- Waifu Create Talking Audio -----------------------
-        vocal_pipeline.tts(use_answer, save_path=f'./audio_cache/dialog_cache.wav', voice_conversion=False)  # todo **tt set voice_conversion=true for VC
+        vocal_pipeline.tts(use_answer, save_path=f'./audio_cache/dialog_cache.wav', voice_conversion=True)
         # --------------------------------------------------
 
         # ----------- Waifu Talking -----------------------

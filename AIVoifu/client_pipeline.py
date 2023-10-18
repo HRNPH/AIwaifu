@@ -6,7 +6,7 @@ class tts_pipeline:
         print('Loading Waifu Vocal Pipeline...')
         self.cache_root = './audio_cache'
         self.model = tts.auto_tts()
-        self.vc_model = vc.vits_vc_inference(force_load_model=False)
+        self.vc_model = vc.vc_inference(force_load_model=False)
         print('Loaded Waifu Vocal Pipeline')
 
     def tts(self, text, voice_conversion=True, save_path=None):
@@ -16,5 +16,10 @@ class tts_pipeline:
         self.model.tts(text, save_path)
         # voice conversion
         if voice_conversion:
-            self.vc_model.convert(save_path, 22050, from_file=True, save_path=save_path)
+            self.vc_model.convert(save_path, save_path=save_path)
         return save_path
+    
+
+if __name__ == '__main__':
+    model = tts_pipeline()
+    model.tts('Hello This Is A Test Text Anyway', save_path='./test.wav')

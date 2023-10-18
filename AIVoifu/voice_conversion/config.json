@@ -1,0 +1,8 @@
+{
+    "hubert_models": [{
+        "NAME": "zomehwh-hubert-base",
+        "AUTHOR": "zomehwh",
+        "LICENSE": "MIT",
+        "CHECKPOINT_LINK": "https://huggingface.co/spaces/zomehwh/rvc-models/resolve/main/hubert_base.pt"
+    }]
+}

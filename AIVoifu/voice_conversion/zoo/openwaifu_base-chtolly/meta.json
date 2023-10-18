@@ -1,8 +1,0 @@
-{
-    "DESCRIPTION": "Base Waifu Sound Developed by OpenWaifu",
-    "ORIGIN": "https://huggingface.co/openwaifu/SoVits-VC-Chtholly-Nota-Seniorious-0.1/tree/main",
-    "AUTHOR": "HRNPH",
-    "LICENSE": "MIT",
-    "MODEL_LINK": "https://huggingface.co/openwaifu/SoVits-VC-Chtholly-Nota-Seniorious-0.1/resolve/main/chtholly.pth",
-    "CONFIG_LINK": "https://huggingface.co/openwaifu/SoVits-VC-Chtholly-Nota-Seniorious-0.1/raw/main/config.json"
-}

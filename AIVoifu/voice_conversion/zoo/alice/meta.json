@@ -1,0 +1,9 @@
+{
+    "DESCRIPTION": "alice-rvc",
+    "ORIGIN": "https://huggingface.co/spaces/zomehwh/sovits-models/raw/main/models/alice",
+    "AUTHOR": "zomehwh",
+    "LICENSE": "MIT",
+    "CHECKPOINT_LINK": "https://huggingface.co/spaces/zomehwh/rvc-models/resolve/main/weights/alice/alice.pth",
+    "FEATURE_RETRIEVAL_LIBRARY_LINK": "https://huggingface.co/spaces/zomehwh/rvc-models/resolve/main/weights/alice/added_IVF141_Flat_nprobe_4.index",
+    "FEATURE_FILE_LINK": "https://huggingface.co/spaces/zomehwh/rvc-models/resolve/main/weights/alice/total_fea.npy"
+}

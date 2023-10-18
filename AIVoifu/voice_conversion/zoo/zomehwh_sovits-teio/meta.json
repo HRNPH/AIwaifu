@@ -1,8 +1,0 @@
-{
-    "DESCRIPTION": "Teio is a Waifu Sound SoVits Modle Developed by zomehwh",
-    "ORIGIN": "https://huggingface.co/spaces/zomehwh/sovits-teio",
-    "AUTHOR": "zomehwh",
-    "LICENSE": "MIT",
-    "MODEL_LINK": "https://huggingface.co/spaces/zomehwh/sovits-teio/resolve/main/models/teio/teio.pth",
-    "CONFIG_LINK": "https://huggingface.co/spaces/zomehwh/sovits-teio/raw/main/models/teio/config.json"
-}
