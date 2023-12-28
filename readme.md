@@ -114,6 +114,10 @@ python ./main.py
 - Everything We Made Is OpenSourced, Free & Customizable To the Very Core
 - We'll never include proprietary Model (ChatGPT/ETC...) since it'll conflict with what we state above And It Censor Lewd Stuff So, no lol
 
+## Star History
+[![Star History Chart](https://api.star-history.com/svg?repos=HRNPH/AIwaifu&type=Date)](https://star-history.com/#HRNPH/AIwaifu&Date)
+
+
 # How Can I help?
 Take a look at the issue & feel free to ask question or suggest new features or tests our model to the limit!
 join the discussion and comment on model performance here https://github.com/HRNPH/AIwaifu/discussions/25
