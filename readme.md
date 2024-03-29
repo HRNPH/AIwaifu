@@ -7,9 +7,9 @@
   <p align='center'>an Open sourced customizable AI waifu for everyone</p>
   <p align='center'><a href='https://discord.gg/vVs5C5yDx3'>Join Our Discord!</a></p>
   
-  [![forthebadge](https://raw.githubusercontent.com/BraveUX/for-the-badge/master/src/images/badges/built-with-love.svg)](https://forthebadge.com) [![forthebadge](https://raw.githubusercontent.com/BraveUX/for-the-badge/master/src/images/badges/makes-people-smile.svg)](https://forthebadge.com) [![forthebadge](https://github.com/BraveUX/for-the-badge/raw/master/src/images/badges/0-percent-optimized.svg)](https://forthebadge.com) [![forthebadge](https://github.com/BraveUX/for-the-badge/raw/master/src/images/badges/check-it-out.svg)](https://forthebadge.com)
+  [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/makes-people-smile.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/0-percent-optimized.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/check-it-out.svg)](https://forthebadge.com)
   
-  [![forthebadge](https://raw.githubusercontent.com/BraveUX/for-the-badge/master/src/images/badges/open-source.svg)](https://forthebadge.com) [![forthebadge](https://raw.githubusercontent.com/BraveUX/for-the-badge/master/src/images/badges/made-with-python.svg)](https://forthebadge.com) [![forthebadge](https://raw.githubusercontent.com/BraveUX/for-the-badge/master/src/images/badges/powered-by-black-magic.svg)](https://forthebadge.com)
+  [![forthebadge](https://forthebadge.com/images/badges/open-source.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/powered-by-black-magic.svg)](https://forthebadge.com)
 </div>
 
 
