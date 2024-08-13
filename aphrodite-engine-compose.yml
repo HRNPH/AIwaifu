@@ -9,8 +9,6 @@ services:
               count: all
               driver: nvidia
     env_file: .env
-    environment:
-      - MODEL_NAME=PygmalionAI/pygmalion-2-7b
     hostname: aphrodite-engine
     image: alpindale/aphrodite-engine
     ipc: host
