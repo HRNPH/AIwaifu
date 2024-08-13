@@ -13,7 +13,7 @@ services:
     image: alpindale/aphrodite-engine
     ipc: host
     ports:
-      - "${PORT:-2242}:2242"
+      - "${PORT:-7860}:7860"
     restart: on-failure:5
     user: "${UID:-1000}:${GID:-0}"
     volumes:
