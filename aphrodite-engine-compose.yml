@@ -1,0 +1,27 @@
+services:
+  aphrodite-engine:
+    container_name: aphrodite-engine
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+              count: all
+              driver: nvidia
+    env_file: .env
+    environment:
+      - MODEL_NAME=PygmalionAI/pygmalion-2-7b
+    hostname: aphrodite-engine
+    image: alpindale/aphrodite-engine
+    ipc: host
+    ports:
+      - "${PORT:-2242}:2242"
+    restart: on-failure:5
+    user: "${UID:-1000}:${GID:-0}"
+    volumes:
+      - ${HF_CACHE:-hf-cache}:/tmp
+      - ${SSL_CERTFILE:-/dev/null}:/app/aphrodite-engine/server.crt:ro
+      - ${SSL_KEYFILE:-/dev/null}:/app/aphrodite-engine/server.key:ro
+
+volumes:
+  hf-cache:
