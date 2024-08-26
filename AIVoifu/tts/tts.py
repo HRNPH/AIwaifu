@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Optional
 
 
 # write your own tts class and place it in this folder
@@ -52,7 +52,7 @@ class BaseTTS:
         self.sr = 22050
         self.model = None
 
-    def tts(self, text, out_path):
+    def tts(self, text, out_path, language):
         raise NotImplementedError(f"Please Implement all necessery method in '{self.model_name}' model")
 
     def supported_languages(self) -> list:
@@ -73,10 +73,9 @@ class Gtts(BaseTTS):
         self.model_name = "gtts"
         self.sr = 16000
         self.model = gTTS
-        self.language = None
+        # self.language = language
 
-    def tts(self, text, out_path, language="en"):
-        language = self.language if self.language is not None else language
+    def tts(self, text, out_path, language):
         tts = self.model(text=text, lang=language)
         tts.save(out_path)
 
@@ -98,7 +97,7 @@ class auto_tts: # add your tts model mapping 'key' here
     # possible_model = Literal['khanomtal11', 'key2', 'key3', ...]
     def __init__(
         self,
-        model_selection: possible_model = None,
+        model_selection: Optional[possible_model] = None,
     ) -> None:
         self.model_mapping = {
             # "khanomtal11": khanomtal11,
@@ -126,11 +125,12 @@ class auto_tts: # add your tts model mapping 'key' here
         # request additional args if needed, will do nothing if it was not implemented
         self.model.requested_additional_args()
 
-    def tts(self, text, out_path, model_name=None, **kwargs):
+    def tts(self, text, out_path, language, model_name=None, **kwargs):
         if model_name is not None: # use this model_name instead
             self.model_mapping[model_name]().tts(text, out_path, **kwargs)
-        # use default model, initialized in __init__
-        self.model.tts(text, out_path, **kwargs)
+        else:
+            # use default model, initialized in __init__
+            self.model.tts(text, out_path, language, **kwargs)
 
     def list_all_models(self) -> list:
         return list(self.model_mapping.keys())

@@ -1,29 +1,27 @@
-from pysentimiento import create_analyzer
-import collections
 import re
 
 # msg constructor and formatter
 class character_msg_constructor:
-  def __init__(self, name, char_persona):
+  def __init__(self, name, char_persona, emotion_analyzer, conversation_history=""):
     self.name = name
     self.persona = char_persona
-    self.conversation_history = ''
-    self.emotion_analyzer = create_analyzer(task="emotion", lang="en")
+    self.conversation_history = conversation_history
+    self.emotion_analyzer = emotion_analyzer
     self.split_counter = 0
-    self.history_loop_cache = ''
+    self.user_line_starter = "User:"
+    self.agent_line_starter = f"{self.name}:"
+    self.clean_text_regex = re.compile(r'\*.*?\*')
   
-  def construct_msg(self, text:str, conversation_history=None) -> str:
-    if conversation_history != None:
-      self.conversation_history = f'{self.conversation_history}\n{conversation_history}' # add conversation history
+  def construct_msg(self, text:str) -> str:
+    # if len(self.conversation_history.split('\n')) > 40: # limit conversation history to prevent memory leak
+    #   self.conversation_history = self.conversation_history.split('\n')[-6:]  # replace with last 4 lines
+    #   self.split_counter =  2 
 
-      if len(self.conversation_history.split('\n')) > 40: # limit conversation history to prevent memory leak
-        self.conversation_history = self.conversation_history.split('\n')[-6:]  # replace with last 4 lines
-        self.split_counter =  2 
-
-    conversation_template = f"""{self.name}'s Persona: {self.persona}
-
+    conversation_template = f"""You are {self.name}, who has persona {self.persona}. 
+    Your job is to have conversation with the user as fluid as possible, however don't fake things out of nowhere.
+    Here's History of previous conversation:
     {self.conversation_history.strip()}
-    You: {text}
+    User: {text}
     """
 
     return '\n'.join([x.strip() for x in conversation_template.split('\n')])
@@ -35,7 +33,7 @@ class character_msg_constructor:
     conversation_line_count = 0
     for idx, thisline in enumerate(splited):
       holder = conversation_line_count
-      if thisline.startswith(f'{self.name}:') or thisline.startswith('You:'): # if found talking line
+      if thisline.startswith(self.agent_line_starter) or thisline.startswith(self.user_line_starter): # if found talking line
         holder += 1
 
       if holder > conversation_line_count: # append talking line at each found
@@ -60,6 +58,6 @@ class character_msg_constructor:
     return ordered[:2]
   
   def clean_emotion_action_text_for_speech(self, text):
-    clean_text = re.sub(r'\*.*?\*', '', text) # remove *action* from text
+    clean_text = re.sub(self.clean_text_regex, '', text) # remove *action* from text
     clean_text = clean_text.replace(f'{self.name}:', '') # replace -> name: "dialog"
     return clean_text
