@@ -36,7 +36,7 @@ def chat(msg, reset=False):
     try:
         r = requests.get('http://localhost:8267/waifuapi', params=params)
     except requests.exceptions.ConnectionError as e:
-        print('--------- Exception Occured ---------')
+        print('--------- Exception Occurred ---------')
         print('if you have run the server on different device, please specify the ip address of the server with the port')
         print('Example: http://192.168.1.112:8267 or leave it blank to use localhost')
         print('***please specify the ip address of the server with the port*** at:')
